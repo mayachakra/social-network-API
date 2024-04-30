@@ -13,6 +13,7 @@ module.exports = {
     async getThoughts(req, res){
         try{
             const thoughts = await Thought.find().populate('reactions');
+            //console.log('thoughts');
             res.json(thoughts);
         }catch(err){
             res.status(500).json(err);
@@ -21,8 +22,9 @@ module.exports = {
     
     async getSingleThought(req, res){
         try{
-            const singleThought = await Thought.findOne({_id: ObjectId(req.params.thoughtId)})
-            .populate('reactions');
+            const singleThought = await Thought.findOne({_id: req.params.thoughtId})
+            .select('-__v')
+            .lean();
             if(!singleThought){
                 return res.status(404).json({message: 'No thought with that id'});
             }
@@ -45,7 +47,7 @@ module.exports = {
     async updateThought(req, res){
         try{
             const thoughtUpdate = await Thought.findOneAndDelete(
-                {_id: ObjectId(req.params.thoughtId)},
+                {_id: req.params.thoughtId},
                 {$set: req.body},
                 {runValidators: true, new: true}
             );
@@ -75,7 +77,7 @@ module.exports = {
     async addReaction(req, res){
         try{
             const thought = await Thought.findOneAndUpdate(
-                {_id: ObjectId(req.params.thoughtId)},
+                {_id: req.params.thoughtId},
                 { $addToSet: {reactions: req.body}},
                 {new: true, runValidators: true}
             );
@@ -92,8 +94,8 @@ module.exports = {
     async deleteReaction(req, res){
         try{
             const thought = await Thought.findOneAndDelete(
-                {_id: ObjectId(req.params.thoughtId)},
-                { $pull: {reactions: ObjectId(req.params.reactionId)}},
+                {_id: req.params.thoughtId},
+                { $pull: {reactions: req.params.reactionId}},
                 {new: true}
             );
             if(!thought){

@@ -12,7 +12,8 @@ module.exports = {
     //CRUD
     async getUsers(req, res){
         try{
-            const users = await User.find().populate('thoughts').populate('friends');
+            const users = await User.find();
+            //.populate('thoughts').populate('friends');
             // .populate('users');
             res.json(users);
         }catch(err){
@@ -22,12 +23,15 @@ module.exports = {
     
     async getSingleUser(req, res){
         try{
-            const singleUser = await User.findOne({_id: ObjectId(req.params.userId)})
-            .populate('thoughts')
-            .populate('friends');
+            const singleUser = await User.findOne({_id: req.params.userId})
+            .select('-__v')
+            .lean();
+            console.log('Found', singleUser);
+
             if(!singleUser){
                 return res.status(404).json({message: 'No user with that username'});
             }
+            //console.log('Found', singleUser);
             res.json(singleUser);
 
         }catch(err){
@@ -47,7 +51,7 @@ module.exports = {
     async updateUser(req, res){
         try{
             const userUpdate = await User.findOneAndDelete(
-                {_id: ObjectId(req.params.userId)},
+                {_id: req.params.userId},
                 {$set: req.body},
                 {runValidators: true, new: true}
             );
@@ -62,7 +66,7 @@ module.exports = {
     
     async deleteUser(req, res){
         try{
-            const user = await User.findOneAndDelete({_id: ObjectId(req.params.userId)});
+            const user = await User.findOneAndDelete({_id: req.params.userId});
             if (!user){
                 return res.status(404).json({message: 'No user with this username'});
             }
@@ -77,7 +81,7 @@ module.exports = {
     async addFriend(req, res){
         try{
             const user = await User.findOneAndUpdate(
-                {username: ObjectId(req.params.username)},
+                {_id: req.params.userId},
                 { $addToSet: {friends: req.params.friendId}},
                 {new: true}
             );
@@ -94,8 +98,8 @@ module.exports = {
     async deleteFriend(req, res){
         try{
             const user = await User.findOneAndDelete(
-                {username: ObjectId(req.params.username)},
-                { $pull: {friends: ObjectId(req.params.friendId)}},
+                {_id: req.params.userId},
+                { $pull: {friends: req.params.friendId}},
                 {new: true}
             );
             if(!user){

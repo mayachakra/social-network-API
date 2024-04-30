@@ -24,7 +24,7 @@ const userSchema = new Schema(
         friends: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'User',
+                ref: 'Friend',
             },
         ],
     },
@@ -36,6 +36,7 @@ const userSchema = new Schema(
         //id: false, //so Mongoose registers the username as the primary key instead of creating a default id
     }
 );
+
 
 //virtual for friencCount
 userSchema.virtual('friendCount').get(function () {
