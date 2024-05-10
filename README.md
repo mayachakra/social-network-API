@@ -30,4 +30,5 @@ To do this I ran the seed, and deployed the server and tested it through Insomni
 Here are videos of the example usages:
 https://drive.google.com/file/d/12U_CMgzT_pkukfzNU8tueaqDp-5EqXP5/view?usp=sharing
 https://drive.google.com/file/d/14rqjwCTztyXx5a-CEKRPCWcykOqYEvoh/view?usp=sharing
+https://drive.google.com/file/d/1WJrkfT45g89qRBNk5RaZWFFWCkj7o5Y8/view?usp=sharing
 
